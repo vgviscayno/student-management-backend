@@ -1,1 +1,1 @@
-# student-management-backend-boilerplate
+# student-management-backend
