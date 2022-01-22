@@ -15,3 +15,9 @@ export const getCommonStudents = {
     ).required()
   })
 }
+
+export const suspendStudent = {
+  body: Joi.object({
+    student: Joi.string().email().required()
+  })
+}

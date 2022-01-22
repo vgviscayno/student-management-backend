@@ -4,7 +4,7 @@ export const successResponse = (req, res, data = {}, code = 200) =>
   });
 
 export const errorResponse = (req, res, message = "Something went wrong", code = 500, error = {}) =>
-  res.status(500).json({
+  res.status(code).json({
     code,
     message,
     error,

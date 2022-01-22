@@ -22,7 +22,9 @@ describe("Api Controller", () => {
       });
 
       it("should fail without students ", async (done) => {
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com'});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor1@gmail.com'
+        });
         const { message, details } = body;
 
         expect(message).toEqual("Validation Failed");
@@ -32,7 +34,9 @@ describe("Api Controller", () => {
       });
 
       it("should fail if tutor is not an email", async (done) => {
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1gmail.com'});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor1gmail.com'
+        });
         const { message, details } = body;
 
         expect(message).toEqual("Validation Failed");
@@ -42,7 +46,9 @@ describe("Api Controller", () => {
       });
 
       it("should fail if students are not in email format", async (done) => {
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com', students:['asoidajsd']});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor1@gmail.com', students:['asoidajsd']
+        });
         const { message, details } = body;
 
         expect(message).toEqual("Validation Failed");
@@ -54,7 +60,10 @@ describe("Api Controller", () => {
 
     describe("Valid body", () => {
       it("should pass for new tutor and students", async (done) => {
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com', students:['student1@gmail.com']});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor1@gmail.com',
+          students:['student1@gmail.com']
+        });
         
         expect(body).toEqual({})
         expect(statusCode).toEqual(204);
@@ -63,7 +72,10 @@ describe("Api Controller", () => {
 
       it("should pass for existing tutor and new students", async (done) => {
         {
-          const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com', students:['student1@gmail.com']});
+          const { statusCode, body } = await request(app).post("/api/register").send({
+            tutor: 'tutor1@gmail.com',
+            students:['student1@gmail.com']
+          });
           expect(body).toEqual({})
           expect(statusCode).toEqual(204);
         }
@@ -76,12 +88,18 @@ describe("Api Controller", () => {
 
       it("should pass for new tutor and old students", async (done) => {
         {
-          const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com', students:['student1@gmail.com']});
+          const { statusCode, body } = await request(app).post("/api/register").send({
+            tutor: 'tutor1@gmail.com',
+            students:['student1@gmail.com']
+          });
           expect(body).toEqual({})
           expect(statusCode).toEqual(204);
         }
 
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor2@gmail.com', students:['student1@gmail.com']});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor2@gmail.com', 
+          students:['student1@gmail.com']
+        });
         expect(body).toEqual({})
         expect(statusCode).toEqual(204);
         done();
@@ -133,13 +151,45 @@ describe("Api Controller", () => {
 
   describe("SuspendStudent API", () => {
     describe("Invalid body", () => {
-      it("should fail for nonexistent student", async (done) => {
+      it("should fail without student", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/suspend").send();
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ student: '"student" is required' }]);
+        expect(statusCode).toEqual(400);
+        done();
+      });
+      it("should fail if student is not an email", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/suspend").send({
+          student:"asdasd@asd"
+        });
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ student: '"student" must be a valid email' }]);
+        expect(statusCode).toEqual(400);
         done();
       });
     });
 
     describe("Valid body", () => {
+      it("should fail for nonexistent student", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/suspend").send({
+          student:'nonexistendstudent@gmail.com'
+        });
+        const { message } = body;
+
+        expect(message).toEqual("Student doesn't exist");
+        expect(statusCode).toEqual(400);
+        done();
+      });
       it("should pass for existing student", async (done) => {
+        const { statusCode } = await request(app).post("/api/suspend").send({
+          student:'student1@gmail.com'
+        });
+
+        expect(statusCode).toEqual(204);
         done();
       });
     });
