@@ -92,20 +92,40 @@ describe("Api Controller", () => {
   describe("GetCommonStudents API", () => {
     describe("Invalid query", () => {
       it("should fail without tutor ", async (done) => {
+        const { statusCode, body } = await request(app).get("/api/getcommonstudents").send();
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ tutor: '"tutor" is required' }]);
+        expect(statusCode).toEqual(400);
         done();
       });
 
       it("should fail if tutor is not an email ", async (done) => {
+        const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=asdaasd.com").send();
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ tutor: '"tutor" must be a valid email' }]);
+        expect(statusCode).toEqual(400);
         done();
       });
     });
 
     describe("Valid query", () => {
       it("should pass for single common tutor ", async (done) => {
+        const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com").send();
+
+        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com']})
+        expect(statusCode).toEqual(200);
         done();
       });
 
       it("should pass for multiple common tutor", async (done) => {
+        const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com&tutor=tutor2@gmail.com").send();
+
+        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com']})
+        expect(statusCode).toEqual(200);
         done();
       });
     });

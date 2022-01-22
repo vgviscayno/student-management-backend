@@ -9,5 +9,6 @@ const router = express.Router();
 
 // api/register
 router.post("/register", validate(apiValidator.register, { keyByField: true }), apiController.register);
+router.get("/getcommonstudents",validate(apiValidator.getCommonStudents, {keyByField: true}), apiController.getCommonStudents);
 
 module.exports = router;
