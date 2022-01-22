@@ -21,27 +21,21 @@ class RegisterStudents {
   async createTutor(tutorEmail) {
     const tutorAttributes = {email: tutorEmail}
 
-    //Find and return existing
-    let tutor = await Tutor.findOne({where: tutorAttributes})
-    if (tutor != null) {
-      return tutor;
-    }
+    const [tutor] = await Tutor.findOrCreate({
+      where: tutorAttributes
+    });
 
-    //Create new
-    return await Tutor.create(tutorAttributes)
+    return tutor;
   }
 
   async createStudent(studentEmail) {
     const studentAttributes = {email: studentEmail}
 
-    //Find and return existing
-    let student = await Student.findOne({where: studentAttributes})
-    if (student != null) {
-      return student;
-    }
+    const [student] = await Student.findOrCreate({
+      where: studentAttributes
+    });
 
-    //Create new
-    return await Student.create(studentAttributes)
+    return student;
   }
 
   async createTutorStudentAssociation(tutorId, studentId) {
