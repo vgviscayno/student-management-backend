@@ -16,23 +16,23 @@ class GetCommonStudents {
 
   async call() {
     /* TODO: Implementation */
-    const tutors = await this.findTutors(this.tutorsEmails)
+    const tutors = await GetCommonStudents.findTutors(this.tutorsEmails)
     if(tutors.length === 0) {
       return []
     }
     const studentsIds = await this.findStudentsIds(tutors)
 
-    return await this.getStudentsEmails(studentsIds)
+    return await GetCommonStudents.getStudentsEmailsByIds(studentsIds)
   }
 
-  async findTutors(emails) {
+  static async findTutors(emails) {
     //find tutors
-    let tutors = await Promise.all(emails.map(async (email) => {
-      return await Tutor.findOne({
-        where: {email},
-        attributes:['id']
-      })
-    }))
+    let tutors = await Tutor.findAll({
+      where: {
+        [Op.or]: emails.map(email => ({email}))
+      },
+      attributes: ['id']
+    })
 
     //filter list of tutors
     tutors = tutors.filter(tutor => tutor !== null)
@@ -45,7 +45,7 @@ class GetCommonStudents {
     return tutorIds
   }
 
-  async getCommonStudentIds (tutorIds) {
+  static async getCommonStudentIds (tutorIds) {
     //Query tutors_students table (association table)
     const tutors_students = await Tutors_Students.findAll({
       where: {
@@ -65,12 +65,10 @@ class GetCommonStudents {
   async findStudentsIds(tutors) {
     const tutorIds = this.getTutorIds(tutors)
 
-    return this.getCommonStudentIds(tutorIds)
-
-    
+    return GetCommonStudents.getCommonStudentIds(tutorIds)
   }
 
-  async getStudentsEmails(studentsIds) {
+  static async getStudentsEmailsByIds(studentsIds) {
     const studentsEmails = (await Promise.all(studentsIds.map(async (id) => {
       return await Student.findByPk(id)
     }))).map(student => student.email)
