@@ -71,34 +71,18 @@ describe("Api Controller", () => {
       });
 
       it("should pass for existing tutor and new students", async (done) => {
-        {
-          const { statusCode, body } = await request(app).post("/api/register").send({
-            tutor: 'tutor1@gmail.com',
-            students:['student1@gmail.com']
-          });
-          expect(body).toEqual({})
-          expect(statusCode).toEqual(204);
-        }
-
-        const { statusCode, body } = await request(app).post("/api/register").send({tutor: 'tutor1@gmail.com', students:['student2@gmail.com']});
+        const { statusCode, body } = await request(app).post("/api/register").send({
+          tutor: 'tutor1@gmail.com',
+           students:['student2@gmail.com', 'student3@gmail.com']});
         expect(body).toEqual({})
         expect(statusCode).toEqual(204);
         done();
       });
 
       it("should pass for new tutor and old students", async (done) => {
-        {
-          const { statusCode, body } = await request(app).post("/api/register").send({
-            tutor: 'tutor1@gmail.com',
-            students:['student1@gmail.com']
-          });
-          expect(body).toEqual({})
-          expect(statusCode).toEqual(204);
-        }
-
         const { statusCode, body } = await request(app).post("/api/register").send({
           tutor: 'tutor2@gmail.com', 
-          students:['student1@gmail.com']
+          students:['student1@gmail.com', 'student4@gmail.com']
         });
         expect(body).toEqual({})
         expect(statusCode).toEqual(204);
@@ -134,7 +118,7 @@ describe("Api Controller", () => {
       it("should pass for single common tutor ", async (done) => {
         const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com").send();
 
-        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com']})
+        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com', 'student3@gmail.com']})
         expect(statusCode).toEqual(200);
         done();
       });
@@ -142,7 +126,7 @@ describe("Api Controller", () => {
       it("should pass for multiple common tutor", async (done) => {
         const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com&tutor=tutor2@gmail.com").send();
 
-        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com']})
+        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com', 'student3@gmail.com', 'student4@gmail.com']})
         expect(statusCode).toEqual(200);
         done();
       });
@@ -180,7 +164,7 @@ describe("Api Controller", () => {
         });
         const { message } = body;
 
-        expect(message).toEqual("Student doesn't exist");
+        expect(message).toEqual("Student not registered");
         expect(statusCode).toEqual(400);
         done();
       });
@@ -222,18 +206,47 @@ describe("Api Controller", () => {
 
     describe("Valid body", () => {
       it("should fail if tutor doesnt exist", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send({
+          tutor:'nonexistendtutor@gmail.com',
+          notification: "Hello everyone"
+        });
+        const { message } = body;
+
+        expect(message).toEqual("Tutor not registered");
+        expect(statusCode).toEqual(400);
         done();
       });
   
       it("should pass and retrieve students that belongs to the tutor", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send({
+          tutor:'tutor2@gmail.com',
+          notification: "Hello everyone"
+        });
+
+        expect(body).toEqual({recipients: ["student4@gmail.com"]})
+        expect(statusCode).toEqual(200);
         done();
       });
   
       it("should pass and retrieve students that belongs to the tutor and mentioned students", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send({
+          tutor:'tutor2@gmail.com',
+          notification: "Hello everyone and @student2@gmail.com"
+        });
+
+        expect(body).toEqual({recipients: ['student2@gmail.com', 'student4@gmail.com']})
+        expect(statusCode).toEqual(200);
         done();
       });
   
       it("should pass and retrieve students that are not suspended only", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send({
+          tutor:'tutor1@gmail.com',
+          notification: "Hello everyone and @student4@gmail.com"
+        });
+
+        expect(body).toEqual({recipients: ['student2@gmail.com','student3@gmail.com', 'student4@gmail.com']})
+        expect(statusCode).toEqual(200);
         done();
       });
     });

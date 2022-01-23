@@ -9,21 +9,17 @@ class RetrieveNotifications {
 
   async call(studentsEmails) {
     //Get students ids mentioned in notification
-    const emails = RetrieveNotifications.getEmailsFromString(this.notification)
+    const mentionedEmails = RetrieveNotifications.getEmailsFromString(this.notification)
 
-    if(emails.length === 0) {
-      return studentsEmails;
-    }
-
-    const mentionedStudents = await RetrieveNotifications.findStudentsByEmails(emails)
-
-    const mentionedEmails = mentionedStudents.map(student => student.email)
-
-    const recipientEmails = [...studentsEmails, ...mentionedEmails].filter((item, pos, self) => {
+    const allEmails = [...studentsEmails, mentionedEmails].filter((item, pos, self) => {
       return self.indexOf(item) === pos
     });
 
-    return recipientEmails
+    const mentionedStudents = await RetrieveNotifications.findUnsuspendedStudentsByEmails(allEmails)
+
+    const mentionedStudentsEmails = mentionedStudents.map(student => student.email)
+
+    return mentionedStudentsEmails
   }
 
   static isEmail(string) {
@@ -54,15 +50,18 @@ class RetrieveNotifications {
     });
   }
 
-  static async findStudentsByEmails(emails) {
+  static async findUnsuspendedStudentsByEmails(emails) {
     //find students
     let students = await Student.findAll({
       where: {
-        [Op.or]: emails.map(email => ({email}))
+        email: {
+          [Op.or]: emails.map(email => email)
+        },
+        isSuspended: false
       },
       attributes: ['email']
     })
-
+    
     //filter list of students
     students = students.filter(student => student !== null)
 
