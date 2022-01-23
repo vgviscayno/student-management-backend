@@ -10,7 +10,7 @@ class SuspendStudent {
         if(student === null) {
             throw {
                 name: 'NonExistentStudent',
-                message: "Student doesn't exist"
+                message: "Student not registered"
             }
         }
 
