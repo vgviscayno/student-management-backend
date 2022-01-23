@@ -21,3 +21,10 @@ export const suspendStudent = {
     student: Joi.string().email().required()
   })
 }
+
+export const retrieveNotifications = {
+  body: Joi.object({
+    tutor: Joi.string().email().required(),
+    notification: Joi.string().required(),
+  })
+}

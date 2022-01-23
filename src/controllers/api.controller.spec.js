@@ -195,13 +195,27 @@ describe("Api Controller", () => {
     });
   });
 
-  describe("ReceiveNotifications API", () => {
+  describe("RetrieveNotifications API", () => {
     describe("Invalid body", () => {
       it("should fail if tutor is empty", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send();
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ tutor: '"tutor" is required' }]);
+        expect(statusCode).toEqual(400);
         done();
       });
 
       it("should fail if notification is empty", async (done) => {
+        const { statusCode, body } = await request(app).post("/api/retrievenotifications").send({
+          tutor:"asdasd@gmail.com"
+        });
+        const { message, details } = body;
+
+        expect(message).toEqual("Validation Failed");
+        expect(details).toEqual([{ notification: '"notification" is required' }]);
+        expect(statusCode).toEqual(400);
         done();
       });
     });
