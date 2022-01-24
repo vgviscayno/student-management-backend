@@ -97,9 +97,11 @@
     - .env.sample (development)
     - .env.test.sample (testing)
 
-2. To use one (development or testing), just copy a sample and remove the '.sample' extension from the copy. **For example:** for the development config file, copy 'env.sample' to the same directory and rename it to '.env'
+2. Be sure to have your mysql server running locally
 
-3. In the configuration file, set the variables that you will use for development/testing (e.g. PORT, database credentials, etc.)
+3. To use one (development or testing), just copy a sample and remove the '.sample' extension from the copy. **For example:** for the development config file, copy 'env.sample' to the same directory and rename it to '.env'
+
+4. In the configuration file, set the variables that you will use for development/testing (e.g. PORT, database credentials, etc.)
 
 ### 2. Development
 1. After setting up the env file for development, install the node_modules.
@@ -126,3 +128,9 @@
         npm run dev
         ```
         This command will run the application
+
+### 3. Testing
+1. Run test suite(s):
+    ```
+    npm run test
+    ```

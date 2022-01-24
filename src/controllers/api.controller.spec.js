@@ -118,7 +118,7 @@ describe("Api Controller", () => {
       it("should pass for single common tutor ", async (done) => {
         const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com").send();
 
-        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com', 'student3@gmail.com']})
+        expect(body).toEqual({students:['student1@gmail.com', 'student3@gmail.com', 'student2@gmail.com']})
         expect(statusCode).toEqual(200);
         done();
       });
@@ -126,7 +126,7 @@ describe("Api Controller", () => {
       it("should pass for multiple common tutor", async (done) => {
         const { statusCode, body } = await request(app).get("/api/getcommonstudents?tutor=tutor1@gmail.com&tutor=tutor2@gmail.com").send();
 
-        expect(body).toEqual({students:['student1@gmail.com', 'student2@gmail.com', 'student3@gmail.com', 'student4@gmail.com']})
+        expect(body).toEqual({students:['student1@gmail.com', 'student3@gmail.com', 'student2@gmail.com', 'student4@gmail.com']})
         expect(statusCode).toEqual(200);
         done();
       });
