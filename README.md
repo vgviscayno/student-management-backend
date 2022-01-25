@@ -1,5 +1,8 @@
 # student-management-backend
 
+## Deployed version
+https://vgv-student-management-backend.herokuapp.com/ 
+
 ## API Documentation
 
 ### Register API
