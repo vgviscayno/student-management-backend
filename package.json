@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "start": "node src/server.js",
         "dev": "nodemon -r dotenv/config src/server.js dotenv_config_path=./.env",
         "db:create": "npx sequelize-cli db:create",
         "db:migrate": "npx sequelize-cli db:migrate",
